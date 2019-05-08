@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<script src="https://api-maps.yandex.ru/2.1/?apikey=<e819c7ba-27df-4e9a-af0a-20ea8d9ff4b8>&lang=ru_RU" type="text/javascript"></script>
+		<script
+  src="https://code.jquery.com/jquery-3.3.1.min.js"
+  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+  crossorigin="anonymous"></script>
+    <style>
+        .wrapper {
+            display: flex;
+        }
+        .left {
+            width: 70vw;
+        }
+        .right {
+            width: 30vw;
+            height: 100vh;
+            background-color: rgba(128, 128, 128, 0.493);
+        }
+        .popup {
+            position: absolute;
+            top: 400px;
+            left: 200px;
+            width: 300px;
+						padding: 20px;
+						border-radius: 10px;
+            background: white;
+            font-size: 16px;
+            transition: all .5s;
+            opacity: 0;
+            z-index: 100;
+        }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <div class="left">
+            <div id="map" style="width: 70vw; height: 100vh"></div>
+        </div>
+        <div class="right">
+            
+        </div>
+        <div class="popup">
+            <div class="text"></div>
+            <div class="close">закрыть</div>
+        </div>
+    </div>
+    
+</body>
+<script type="text/javascript">
+		(async () => {
+			const points = await $.ajax('/all')
+			console.log(points);
+
+			ymaps.ready(init);
+			function init(){ 
+					var myMap = new ymaps.Map("map", {
+							center: [54.7358014, 55.9696942],
+							zoom: 10
+					});
+					const placemarks = [];
+					points.forEach((point) => {
+						let myPlacemark = new ymaps.Placemark([point.latitude, point.longitude], {name: 'Ruslan'}, {
+							preset: 'islands#icon',
+							iconColor: '#FF0000'
+						})
+						placemarks.push(myPlacemark)
+
+						myPlacemark.events.add('click', function (e) {
+							console.log(e);
+							const popup = document.querySelector('.popup');
+							const text = document.querySelector('.text');
+							popup.style.opacity = '1';
+
+							const { category, code, latitude, longitude, name, registryType, riskCategory, timestamp } = point;
+							let content = '';
+							for (let property in point) {
+								content += `<p>${property}: ${point[property]}`
+							}
+							text.innerHTML = content;
+						});
+						const close = document.querySelector('.close');
+						close.addEventListener('click', () => {
+								const popup = document.querySelector('.popup');
+								popup.style.opacity = '0';
+						});
+
+						myMap.geoObjects.add(myPlacemark);
+					})				
+			}
+		})()
+</script>
+</html>

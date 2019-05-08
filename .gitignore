@@ -1,0 +1,13 @@
+.DS_Store
+app/project/node_modules
+api/node_modules
+tmp
+*.tmp
+*.log
+runtime/logs/*
+!runtime/logs/index.html
+runtime/tmp/*
+!runtime/tmp/index.html
+.lock
+/**/*.lock
+node_modules
